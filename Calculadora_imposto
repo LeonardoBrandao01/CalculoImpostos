@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+public class Calculadora_imposto {
+
+
+    public static double calcularIPI(double valorProduto, double frete, double seguro) {
+        double baseCalculo = valorProduto + frete + seguro;
+        return baseCalculo * 0.0015; // IPI = 0,15% da base de cálculo
+    }
+
+    // Método para calcular o ICMS
+    public static double calcularICMS(double valorProduto, String ufOrigem, String ufDestino) {
+        double aliquotaICMS;
+
+        // Definindo alíquotas com base na UF de origem e destino (exemplos)
+        if (ufOrigem.equalsIgnoreCase("SP") && ufDestino.equalsIgnoreCase("RJ")) {
+            aliquotaICMS = 0.12; // 12% de SP para RJ
+        } else if (ufOrigem.equalsIgnoreCase("SP") && ufDestino.equalsIgnoreCase("DF")) {
+            aliquotaICMS = 0.07; // 7% de SP para DF
+        } else {
+            aliquotaICMS = 0.18; // Alíquota genérica de ICMS para outras UF
+        }
+
+        return valorProduto * aliquotaICMS;
+    }
+
+ 
+    public static double calcularISS(double valorServico, double aliquotaISS) {
+        return valorServico * aliquotaISS; // ISS depende da alíquota praticada
+    }
+
+   
+    public static double calcularPrecoFinal(double valorProduto, double frete, double seguro, String ufOrigem, String ufDestino, double aliquotaISS, double margemLucro) {
+        double ipi = calcularIPI(valorProduto, frete, seguro);
+        double icms = calcularICMS(valorProduto, ufOrigem, ufDestino);
+        double iss = calcularISS(valorProduto, aliquotaISS); // Considerando serviço opcionalmente
+
+        // Cálculo do preço final
+        double precoFinal = valorProduto + frete + seguro + ipi + icms + iss;
+        precoFinal += precoFinal * margemLucro; 
+
+        return precoFinal;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Entrada de dados
+        System.out.print("Valor do produto: ");
+        double valorProduto = scanner.nextDouble();
+
+        System.out.print("Valor do frete: ");
+        double frete = scanner.nextDouble();
+
+        System.out.print("Valor do seguro: ");
+        double seguro = scanner.nextDouble();
+
+        System.out.print("UF de origem: ");
+        String ufOrigem = scanner.next();
+
+        System.out.print("UF de destino: ");
+        String ufDestino = scanner.next();
+
+        System.out.print("Alíquota de ISS (como decimal, ex.: 0.05 para 5%): ");
+        double aliquotaISS = scanner.nextDouble();
+
+        System.out.print("Margem de lucro (como decimal, ex.: 0.20 para 20%): ");
+        double margemLucro = scanner.nextDouble();
+
+     
+        double precoFinal = calcularPrecoFinal(valorProduto, frete, seguro, ufOrigem, ufDestino, aliquotaISS, margemLucro);
+
+       
+        System.out.printf("O preço final do produto é: R$ %.2f%n", precoFinal);
+
+        scanner.close();
+    }
+}
